@@ -40,29 +40,37 @@ const userSchema = new mongoose.Schema({
             }
         }
     ],
-    age: {
-        type: Number,
-        default: 0
-    },
-    height: Number,
-    weight: Number,
-    blood_group: String,
-    illness: String,
+    tokens: [{
+        token: {
+            type: String,
+        }
+    }]
 });
 
 userSchema.methods.createToken = async function () {
+    const user = this
     const token = jwt.sign({ _id: this._id.toString() }, 'cornflakes') //, { expiresIn: "7 days"} 
+
+    user.tokens = user.tokens.concat({ token })
+    await user.save()
     return token
 }
 
-userSchema.virtual("reports", {
-    ref: "Reports",
+userSchema.virtual("details", {
+    ref: "Details",
     localField: "_id",
     foreignField: "user"
 })
 
-
+userSchema.virtual("relations", {
+    ref: "Relation",
+    localField: "_id",
+    foreignField: "head"
+})
 
 const User = new mongoose.model("User", userSchema);
 
 module.exports = User;
+
+
+

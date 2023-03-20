@@ -14,7 +14,7 @@ const authUser = async (req, res, next) => {
         next()
 
     } catch (e) {
-        res.status(401).send({ error: "Authentication Failed" })
+        res.status(401).send({ error: "Authentication Failed. Please Authenticate First." })
     }
 }
 
