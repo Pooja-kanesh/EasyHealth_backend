@@ -7,7 +7,7 @@ const authUser = async (req, res, next) => {
         const decode = jwt.verify(token, 'cornflakes')
         const user = await User.findOne({ _id: decode._id, 'tokens.token': token })
 
-        if (!user) throw new Error("Authentication Failed")
+        if (!user) throw new Error()
 
         req.token = token
         req.user = user

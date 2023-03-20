@@ -8,14 +8,15 @@ const vaccineSchema = new mongoose.Schema({
     },
     available: {
         type: Boolean,
-        default: false
+        default: true
     },
     count: {
         type: Number,
-        default: 0
+        default: 100
     },
 
 })
 
 const Vaccine = mongoose.model('Vaccine', vaccineSchema)
+
 module.exports = Vaccine

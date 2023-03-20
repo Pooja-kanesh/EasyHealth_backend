@@ -22,7 +22,7 @@ const detailsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    major_illness: String,
+    majorIllness: String,
     reports: [{
         date: {
             type: Date

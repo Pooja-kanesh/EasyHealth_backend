@@ -3,11 +3,13 @@ const express = require('express')
 
 const User = require("./database/models/User.js")
 const Details = require("./database/models/Details")
+const authUser = require("./database/middlewares/authUser")
 
 const app = express()
 const PORT = 8000
 
 app.use(express.json())
+
 app.post('/register', async (req, res) => {
     try {
         const user = new User({ ...req.body })
@@ -20,6 +22,17 @@ app.post('/register', async (req, res) => {
         res.status(400).send(e)
     }
 
+})
+
+app.post('/login', async (req, res) => {
+    try {
+        const user = await User.checkCredentials(req.body.email)
+        const token = await user.createToken()
+
+        res.status(200).send({ user, token })
+    } catch (e) {
+        res.status(400).send(e)
+    }
 })
 
 // app.patch("/user/addMember", async (req, res) => {
@@ -39,12 +52,13 @@ app.post('/register', async (req, res) => {
 //     }
 // })
 
-app.post("/user/addDetails", async (req, res) => {
+app.post("/user/addDetails", authUser, async (req, res) => {
     try {
-        const userDetail = new Details({ ...req.body })
+        const userDetail = new Details({ user: req.user._id, ...req.body })
         await userDetail.save()
 
         console.log(userDetail)
+        res.status(200).send()
     } catch (e) {
         res.status(400).send(e)
     }

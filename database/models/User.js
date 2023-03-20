@@ -47,9 +47,17 @@ const userSchema = new mongoose.Schema({
     }]
 });
 
+userSchema.statics.checkCredentials = async (email) => {
+    const user = await User.findOne({ email })
+
+    if (!user) throw new Error("User not found")
+
+    return user
+}
+
 userSchema.methods.createToken = async function () {
     const user = this
-    const token = jwt.sign({ _id: this._id.toString() }, 'cornflakes') //, { expiresIn: "7 days"} 
+    const token = jwt.sign({ _id: user._id.toString() }, 'cornflakes') //, { expiresIn: "7 days"} 
 
     user.tokens = user.tokens.concat({ token })
     await user.save()
