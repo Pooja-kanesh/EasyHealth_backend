@@ -5,10 +5,9 @@ const detailsSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
-    dateOfBirth: {
-        type: Number,
+    dob: {
+        type: String,
         required: true,
-        default: 0
     },
     height: {
         type: Number,
@@ -22,10 +21,14 @@ const detailsSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    majorIllness: String,
+    majorIllness: {
+        type: String,
+        default: "None"
+    },
     reports: [{
         date: {
-            type: Date
+            type: Date,
+            default: new Date()
         },
         report: {
             type: String

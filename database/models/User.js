@@ -8,38 +8,12 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true,
         unique: true,
     },
     contact: {
         type: Number,
-        required: true,
         unique: true,
     },
-    state: {
-        type: String,
-
-    },
-    district: {
-        type: String,
-
-    },
-    familyMembers: [
-        {
-            name: {
-                type: String,
-                required: true
-            },
-            age: {
-                type: Number,
-                required: true
-            },
-            relation: {
-                type: String,
-                required: true
-            }
-        }
-    ],
     tokens: [{
         token: {
             type: String,

@@ -7,6 +7,10 @@ const relationSchema = new mongoose.Schema({
     },
     members: [
         {
+            relation: {
+                type: String,
+                required: true,
+            },
             member: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "User"
