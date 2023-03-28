@@ -9,10 +9,12 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         unique: true,
+        sparse: true
     },
     contact: {
         type: Number,
         unique: true,
+        sparse: true
     },
     tokens: [{
         token: {
