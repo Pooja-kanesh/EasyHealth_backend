@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const bcryptjs = require('bcryptjs')
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -16,6 +17,7 @@ const userSchema = new mongoose.Schema({
         unique: true,
         sparse: true
     },
+    password: { type: String, trim: true },
     tokens: [{
         token: {
             type: String,
@@ -23,11 +25,16 @@ const userSchema = new mongoose.Schema({
     }]
 });
 
-userSchema.statics.checkCredentials = async (email) => {
+userSchema.statics.checkCredentials = async (email, password) => {
     const user = await User.findOne({ email })
+    if (!user) {
+        throw new Error("unable to login");
+    }
+    const isUser = await bcryptjs.compare(password, user.password);
 
-    if (!user) throw new Error("User not found")
-
+    if (!isUser) {
+        throw new Error("unable to login");
+    }
     return user
 }
 
@@ -39,6 +46,14 @@ userSchema.methods.createToken = async function () {
     await user.save()
     return token
 }
+
+userSchema.pre('save', async function (next) {
+    const user = this
+    if (user.isModified("password")) {
+        user.password = await bcryptjs.hash(user.password, 8);
+    }
+    next();
+})
 
 userSchema.virtual("details", {
     ref: "Details",

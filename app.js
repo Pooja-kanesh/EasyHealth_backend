@@ -1,13 +1,12 @@
 require('./database/mongoose.js')
 const express = require('express')
 const cors = require('cors')
-// const request = require('request')
-// const fetch = require('node-fetch');
 
 const authUser = require("./database/middlewares/authUser")
 const User = require("./database/models/User.js")
 const Details = require("./database/models/Details.js")
 const Relation = require('./database/models/Relation.js')
+const { welcomeEmail } = require('./src/email.js')
 
 const app = express()
 const PORT = 8000
@@ -19,7 +18,6 @@ app.post('/register', async (req, res) => {
     try {
         const user = new User({ ...req.body })
         const head = new Relation({ head: user._id })
-
         await user.save()
         await head.save()
 
@@ -27,6 +25,10 @@ app.post('/register', async (req, res) => {
         await head.save()
 
         const token = await user.createToken();
+        if (user.email) {
+            welcomeEmail(user.email, user.name)
+            console.log('mail sent')
+        }
 
         res.status(201).send({ user, token })
     } catch (e) {
@@ -37,7 +39,7 @@ app.post('/register', async (req, res) => {
 
 app.post('/login', async (req, res) => {
     try {
-        const user = await User.checkCredentials(req.body.email)
+        const user = await User.checkCredentials(req.body.email, req.body.password)
         const token = await user.createToken()
 
         res.status(200).send({ user, token })
@@ -68,7 +70,7 @@ app.post("/user/addMember", authUser, async (req, res) => {
         await newMember.save()
 
         head.members = head.members.concat({ relation: req.body.relation, member: newMember._id })
-        console.log(head)
+        // console.log(head)
         await head.save()
 
         res.status(201).send(head)
@@ -111,10 +113,10 @@ app.get("/user/getDetails/:id", authUser, async (req, res) => {
     try {
         const details = await Details.findOne({ user: req.params.id })
 
-        if (!details) throw new Error()
+        // if (!details) throw new Error()
         res.status(200).send(details)
     } catch (e) {
-        res.status(404).send(e)
+        res.status(500).send(e)
     }
 })
 
