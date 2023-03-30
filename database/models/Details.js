@@ -31,7 +31,7 @@ const detailsSchema = new mongoose.Schema({
             default: new Date()
         },
         report: {
-            type: String
+            type: Buffer
         }
     }]
 })

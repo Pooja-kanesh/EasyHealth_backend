@@ -1,6 +1,8 @@
 require('./database/mongoose.js')
 const express = require('express')
 const cors = require('cors')
+const sharp = require('sharp')
+const multer = require('multer')
 
 const authUser = require("./database/middlewares/authUser")
 const User = require("./database/models/User.js")
@@ -119,6 +121,33 @@ app.get("/user/getDetails/:id", authUser, async (req, res) => {
         res.status(500).send(e)
     }
 })
+
+const upload = multer({
+    limits: {
+        fileSize: 5000000
+    },
+    fileFilter(req, file, cb) { //cb = callback
+        if (!file.originalname.endsWith('.pdf')) {
+            return cb(new Error('Upload PDF only'))
+        }
+
+        cb(undefined, true)
+    }
+})
+
+app.patch('/user/details/addReport/:id', authUser, upload.single('report'), async (req, res) => {
+    const report = req.file.buffer
+    const details = await Details.findOne({ user: req.params.id })
+
+    details.reports = details.reports.concat({ report: report })
+    await details.save()
+
+    res.send({})
+}, (err, req, res, next) => {
+    res.status(400).send(err)
+})
+
+
 
 app.get("/states", (req, res) => {
     res.send({

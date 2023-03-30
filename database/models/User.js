@@ -18,6 +18,10 @@ const userSchema = new mongoose.Schema({
         sparse: true
     },
     password: { type: String, trim: true },
+    usertype: {
+        type: String,
+        default: 'general'
+    },
     tokens: [{
         token: {
             type: String,
