@@ -160,6 +160,18 @@ app.get('/getUsers', async (req, res) => {
     }
 })
 
+app.get('/getCenters', async (req, res) => {
+    try {
+        const allUsers = await User.find()
+        const users = allUsers.filter((user) => {
+            return (user.email && user.usertype === 'center')
+        })
+        res.status(200).send(users)
+    } catch (e) {
+        res.status(500).send(e)
+    }
+})
+
 app.post('/vaccine', async (req, res) => {
     try {
         const vacc = new Vaccine({ ...req.body })
