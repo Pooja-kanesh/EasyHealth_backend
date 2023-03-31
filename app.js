@@ -8,6 +8,7 @@ const authUser = require("./database/middlewares/authUser")
 const User = require("./database/models/User.js")
 const Details = require("./database/models/Details.js")
 const Relation = require('./database/models/Relation.js')
+const Vaccine = require('./database/models/Vaccine.js')
 const { welcomeEmail } = require('./src/email.js')
 
 const app = express()
@@ -147,7 +148,38 @@ app.patch('/user/details/addReport/:id', authUser, upload.single('report'), asyn
     res.status(400).send(err)
 })
 
+app.get('/getUsers', async (req, res) => {
+    try {
+        const allUsers = await User.find()
+        const users = allUsers.filter((user) => {
+            return (user.email && user.usertype === 'general')
+        })
+        res.status(200).send(users)
+    } catch (e) {
+        res.status(500).send(e)
+    }
+})
 
+app.post('/vaccine', async (req, res) => {
+    try {
+        const vacc = new Vaccine({ ...req.body })
+        await vacc.save()
+
+        res.status(201).send(vacc)
+
+    } catch (e) {
+        res.status(400).send(e)
+    }
+})
+
+app.get('/vaccines', async (req, res) => {
+    try {
+        const vaccines = await Vaccine.find()
+        res.status(200).send(vaccines)
+    } catch (e) {
+        res.status(500).send(e)
+    }
+})
 
 app.get("/states", (req, res) => {
     res.send({
