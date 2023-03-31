@@ -32,13 +32,16 @@ const welcomeEmail = (email, name) => {
     })
 }
 
-const bookingEmail = (email, name) => {
+const bookingEmail = (email, name, center, address, vaccine) => {
     transporter.sendMail({
         from: '"EasyHealth App" <poojakanesh@outlook.com>',
         to: email,
-        subject: "Goodbye! from Task-Manager",
-        text: `Dear ${name}, \n Your appointment has been booked.`,
-        html: `<p>● Center name : <b>${center}</b><br>● Vaccine name : <b>${vaccine}</b><br>● Timing : <b>10:00 am, Tomorrow</b></p>`
+        subject: "Appointment Confirmation",
+        html: `<p>Dear ${name},<br>Your appointment has been booked.</p><p>● Center name : <b>${center}</b><br>● Address : <b>${address}</b>
+        <br>● Vaccine name : <b>${vaccine}</b><br>● Timing : <b>10:00 am, Tomorrow</b></p><br>
+        <p>Stay Healthy!</p><p>Best regards,<br>
+        EasyHealth Team
+         </p>`
     })
 }
 

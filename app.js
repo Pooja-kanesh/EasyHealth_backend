@@ -9,7 +9,7 @@ const User = require("./database/models/User.js")
 const Details = require("./database/models/Details.js")
 const Relation = require('./database/models/Relation.js')
 const Vaccine = require('./database/models/Vaccine.js')
-const { welcomeEmail } = require('./src/email.js')
+const { welcomeEmail, bookingEmail } = require('./src/email.js')
 
 const app = express()
 const PORT = 8000
@@ -30,7 +30,7 @@ app.post('/register', async (req, res) => {
         const token = await user.createToken();
         if (user.email) {
             welcomeEmail(user.email, user.name)
-            console.log('mail sent')
+            // console.log('mail sent')
         }
 
         res.status(201).send({ user, token })
@@ -178,6 +178,20 @@ app.get('/vaccines', async (req, res) => {
         res.status(200).send(vaccines)
     } catch (e) {
         res.status(500).send(e)
+    }
+})
+
+app.post('/booking', authUser, async (req, res) => {
+    try {
+        const user = req.user
+        const center = req.body.center
+        const vacc = req.body.vaccine
+        bookingEmail(user.email, user.name, center.name, center.address, vacc)
+
+        res.status(200).send()
+    }
+    catch (e) {
+        res.status(400).send(e)
     }
 })
 
